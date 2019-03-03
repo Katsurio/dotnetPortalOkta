@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Okta.AspNetCore;
 
 namespace dotnetPortalOkta
 {
@@ -33,6 +35,23 @@ namespace dotnetPortalOkta
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = OktaDefaults.MvcAuthenticationScheme;
+            })
+            .AddCookie()
+            .AddOktaMvc(new OktaMvcOptions
+            {
+                OktaDomain = Configuration["Okta:Domain"],
+                ClientId = Configuration["Okta:ClientId"],
+                ClientSecret = Configuration["Okta:ClientSecret"]
+            });
+
+            // ... the rest of ConfigureServices
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,6 +71,8 @@ namespace dotnetPortalOkta
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {
