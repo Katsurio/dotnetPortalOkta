@@ -47,9 +47,9 @@ namespace dotnetPortalOkta
             .AddCookie()
             .AddOktaMvc(new OktaMvcOptions
             {
-                OktaDomain = "https://dev-945913.okta.com",
-                ClientId = "QVqkH5GtavUFf7QAYB-Uyh_c64CQAls7AGkbR7_x",
-                ClientSecret = "0oabtdxcxpWcsAovY356"
+                OktaDomain = Configuration["Okta:OktaDomain"],
+                ClientId = Configuration["Okta:ClientId"],
+                ClientSecret = Configuration["Okta:ClientSecret"]
             });
 
             // ... the rest of ConfigureServices

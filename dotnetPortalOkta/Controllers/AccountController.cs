@@ -15,7 +15,6 @@ namespace okta_aspnetcore_mvc_example.Controllers
         {
             _oktaSettings = oktaSettings.Value;
         }
-
         public IActionResult Login()
         {
             return View();
