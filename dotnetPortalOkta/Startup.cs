@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Okta.AspNetCore;
+using dotnetPortalOkta.Models;
 
 namespace dotnetPortalOkta
 {
@@ -33,6 +34,7 @@ namespace dotnetPortalOkta
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.Configure<OktaSettings>(Configuration.GetSection("Okta"));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
