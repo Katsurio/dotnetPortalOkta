@@ -13,4 +13,7 @@
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.2.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Account\" />
+  </ItemGroup>
 </Project>
