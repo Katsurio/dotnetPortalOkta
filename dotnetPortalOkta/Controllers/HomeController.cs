@@ -17,25 +17,18 @@ namespace dotnetPortalOkta.Controllers
 
         public IActionResult About()
         {
-            return View();
-        }
+            ViewData["Message"] = "Your application description page.";
 
-        public IActionResult Experience()
-        {
-            return View();
-        }
-
-        public IActionResult Portfolio()
-        {
             return View();
         }
 
         public IActionResult Contact()
         {
+            ViewData["Message"] = "Your contact page.";
+
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Okta.AspNetCore;
-using dotnetPortalOkta.Models;
+using Microsoft.IdentityModel.Tokens;
+using Okta.Sdk;
+using Okta.Sdk.Configuration;
 
 namespace dotnetPortalOkta
 {
@@ -27,32 +22,43 @@ namespace dotnetPortalOkta
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<CookiePolicyOptions>(options =>
+            services.AddAuthentication(sharedOptions =>
             {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
-
-            services.Configure<OktaSettings>(Configuration.GetSection("Okta"));
-
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = OktaDefaults.MvcAuthenticationScheme;
+                sharedOptions.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                sharedOptions.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                sharedOptions.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
             })
             .AddCookie()
-            .AddOktaMvc(new OktaMvcOptions
+            .AddOpenIdConnect(options =>
             {
-                OktaDomain = Configuration["Okta:OktaDomain"],
-                ClientId = Configuration["Okta:ClientId"],
-                ClientSecret = Configuration["Okta:ClientSecret"]
+                // Configuration pulled from appsettings.json by default:
+                options.ClientId = Configuration["okta:ClientId"];
+                options.ClientSecret = Configuration["okta:ClientSecret"];
+                options.Authority = Configuration["okta:Issuer"];
+                options.CallbackPath = "/authorization-code/callback";
+                options.ResponseType = "code";
+                options.SaveTokens = true;
+                options.UseTokenLifetime = false;
+                options.GetClaimsFromUserInfoEndpoint = true;
+                options.Scope.Add("openid");
+                options.Scope.Add("profile");
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    NameClaimType = "name"
+                };
             });
-
-            // ... the rest of ConfigureServices
+            
+            if (!string.IsNullOrEmpty(Configuration["okta:OrgUrl"]) && !string.IsNullOrEmpty(Configuration["okta:APIToken"]))
+            {
+                services.AddSingleton<IOktaClient>
+                (
+                    new OktaClient(new OktaClientConfiguration()
+                    {
+                        OrgUrl = Configuration["okta:OrgUrl"],
+                        Token = Configuration["okta:APIToken"]
+                    })
+                );
+            }
             services.AddMvc();
         }
 
@@ -62,17 +68,14 @@ namespace dotnetPortalOkta
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseBrowserLink();
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseCookiePolicy();
 
             app.UseAuthentication();
 
@@ -82,7 +85,7 @@ namespace dotnetPortalOkta
                     name: "root",
                     template: "{action}/{id?}",
                     defaults: new { controller = "Home", action = "Index" });
-
+                
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");

@@ -1,36 +1,29 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using System.Dynamic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using Okta.AspNetCore;
+using Okta.Sdk;
 using dotnetPortalOkta.Models;
 
-namespace okta_aspnetcore_mvc_example.Controllers
+namespace dotnetPortalOkta.Controllers
 {
     public class AccountController : Controller
     {
-        private OktaSettings _oktaSettings;
+        private readonly IOktaClient _oktaClient;
 
-        public AccountController(IOptions<OktaSettings> oktaSettings)
+        public AccountController(IOktaClient oktaClient = null)
         {
-            _oktaSettings = oktaSettings.Value;
+            _oktaClient = oktaClient;
         }
+
         public IActionResult Login()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Login([FromForm]string sessionToken)
         {
             if (!HttpContext.User.Identity.IsAuthenticated)
             {
-                var properties = new AuthenticationProperties();
-                properties.Items.Add("sessionToken", sessionToken);
-                properties.RedirectUri = "/Home/About";
-
-                return Challenge(properties, OktaDefaults.MvcAuthenticationScheme);
+                return Challenge(OpenIdConnectDefaults.AuthenticationScheme);
             }
 
             return RedirectToAction("Index", "Home");
@@ -39,7 +32,52 @@ namespace okta_aspnetcore_mvc_example.Controllers
         [HttpPost]
         public IActionResult Logout()
         {
-            return new SignOutResult(new[] { CookieAuthenticationDefaults.AuthenticationScheme, OktaDefaults.MvcAuthenticationScheme });
+            if (HttpContext.User.Identity.IsAuthenticated)
+            {
+                return SignOut(CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme);
+            }
+
+            return RedirectToAction("Index", "Home");
+        }    
+     
+        [Authorize]
+        public IActionResult Claims()
+        {
+            return View();
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Me()
+        {
+            var username = User.Claims
+                .FirstOrDefault(x => x.Type == "preferred_username")
+                ?.Value.ToString();
+
+            var viewModel = new MeViewModel
+            {
+                Username = username,
+                SdkAvailable = _oktaClient != null
+            };
+
+            if (!viewModel.SdkAvailable)
+            {
+                return View(viewModel);
+            }
+
+            if (!string.IsNullOrEmpty(username))
+            {
+                var user = await _oktaClient.Users.GetUserAsync(username);
+                dynamic userInfoWrapper = new ExpandoObject();
+                userInfoWrapper.Profile = user.Profile;
+                userInfoWrapper.PasswordChanged = user.PasswordChanged;
+                userInfoWrapper.LastLogin = user.LastLogin;
+                userInfoWrapper.Status = user.Status.ToString();
+                viewModel.UserInfo = userInfoWrapper;
+
+                viewModel.Groups = (await user.Groups.ToList()).Select(g => g.Profile.Name).ToArray();
+            }
+            
+            return View(viewModel);
         }
     }
 }
