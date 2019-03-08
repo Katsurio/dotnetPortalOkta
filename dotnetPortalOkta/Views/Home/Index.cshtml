@@ -31,13 +31,15 @@ else
 
 }
 
-<script type="text/javascript">
+    <script type="text/javascript">
     var oktaSignIn = new OktaSignIn({
         baseUrl: "https://dev-945913.okta.com",
         clientId: "0oabwsqbnlrdzsdzh356",
+
         authParams: {
           issuer: "https://dev-945913.okta.com/oauth2/default",
           responseType: ['token', 'id_token'],
+          scope: 'openid profile',
           display: 'page'
         }
       });
@@ -84,7 +86,7 @@ else
           );
         });
       }
-</script>
+    </script>
 
 
 @if (User.Identity.IsAuthenticated)
