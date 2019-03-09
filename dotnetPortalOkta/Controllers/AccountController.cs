@@ -26,7 +26,7 @@ namespace dotnetPortalOkta.Controllers
                 return Challenge(OpenIdConnectDefaults.AuthenticationScheme);
             }
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Apps", "Account");
         }
 
         [HttpPost]
@@ -67,6 +67,10 @@ namespace dotnetPortalOkta.Controllers
             if (!string.IsNullOrEmpty(username))
             {
                 var user = await _oktaClient.Users.GetUserAsync(username);
+
+                var vader = await _oktaClient.Users.GetUserAsync(username);
+                var appList = vader.AppLinks;
+
                 dynamic userInfoWrapper = new ExpandoObject();
                 userInfoWrapper.Profile = user.Profile;
                 userInfoWrapper.PasswordChanged = user.PasswordChanged;
@@ -77,6 +81,40 @@ namespace dotnetPortalOkta.Controllers
                 viewModel.Groups = (await user.Groups.ToList()).Select(g => g.Profile.Name).ToArray();
             }
             
+            return View(viewModel);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Apps()
+        {
+            var username = User.Claims
+                .FirstOrDefault(x => x.Type == "preferred_username")
+                ?.Value.ToString();
+
+            var viewModel = new MeViewModel
+            {
+                Username = username,
+                SdkAvailable = _oktaClient != null
+            };
+
+            if (!viewModel.SdkAvailable)
+            {
+                return View(viewModel);
+            }
+
+            if (!string.IsNullOrEmpty(username))
+            {
+                var user = await _oktaClient.Users.GetUserAsync(username);
+                dynamic userInfoWrapper = new ExpandoObject();
+                userInfoWrapper.Profile = user.Profile;
+                userInfoWrapper.PasswordChanged = user.PasswordChanged;
+                userInfoWrapper.LastLogin = user.LastLogin;
+                userInfoWrapper.Status = user.Status.ToString();
+                viewModel.UserInfo = userInfoWrapper;
+
+                viewModel.Groups = (await user.Groups.ToList()).Select(g => g.Profile.Name).ToArray();
+            }
+
             return View(viewModel);
         }
     }
