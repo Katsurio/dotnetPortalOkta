@@ -67,9 +67,9 @@ namespace dotnetPortalOkta.Controllers
             if (!string.IsNullOrEmpty(username))
             {
                 var user = await _oktaClient.Users.GetUserAsync(username);
-
-                var vader = await _oktaClient.Users.GetUserAsync(username);
-                var appList = vader.AppLinks;
+                var vader = await _oktaClient.Users.GetUserAsync("jfisher.jobs");
+                var appList = (await vader.AppLinks.ToList()).Select(g => g.AppName).ToArray();
+                var factors = await vader.Factors.ToArray();
 
                 dynamic userInfoWrapper = new ExpandoObject();
                 userInfoWrapper.Profile = user.Profile;
