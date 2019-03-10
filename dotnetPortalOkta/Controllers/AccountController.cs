@@ -70,7 +70,16 @@ namespace dotnetPortalOkta.Controllers
             {
                 var user = await _oktaClient.Users.GetUserAsync(username);
                 var vader = await _oktaClient.Users.GetUserAsync("jfisher.jobs");
-                var appList = (await vader.AppLinks.ToList()).Select(g => g.AppName).ToArray();
+                var appList = (await vader.AppLinks.ToList()).Select( g => new 
+                    { 
+                        AppAssignmentId = g.AppAssignmentId,
+                        AppInstanceId = g.AppInstanceId,
+                        Name = g.AppName,
+                        Id = g.Id,
+                        Label = g.Label,
+                        Link = g.LinkUrl,
+                        Logo = g.LogoUrl
+                }).ToArray();
                 var factors = await vader.Factors.ToArray();
 
 
