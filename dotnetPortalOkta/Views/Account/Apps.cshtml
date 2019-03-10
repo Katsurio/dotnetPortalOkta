@@ -3,7 +3,10 @@
 @{
     ViewData["Title"] = "My proflie";
 }
-
+<script src="http://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous">
+</script>
 <h3>Profile</h3>
 
 <dl class="dl-horizontal">
@@ -107,3 +110,25 @@
     }
 
 </dl>
+
+<script>
+var settings = {
+  "async": true,
+  "crossDomain": true,
+  "url": "https://dev-945913.okta.com/api/v1/apps?filter=user.id+eq+%22%22",
+  "method": "GET",
+  "headers": {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+    "Authorization": "SSWS 00RLwH0yrDyAU9qpIim07_PgHQoATziJB0nzs6dyHS",
+    "cache-control": "no-cache",
+    "Postman-Token": "b9f7c1dc-de50-4a3d-ab4d-d994c75458fd"
+  },
+  "processData": false,
+  "data": ""
+}
+
+$.ajax(settings).done(function (response) {
+  console.log(response);
+});
+</script>

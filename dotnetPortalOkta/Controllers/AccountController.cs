@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Okta.Sdk;
 using dotnetPortalOkta.Models;
+using Okta.Sdk.Internal;
+using System;
 
 namespace dotnetPortalOkta.Controllers
 {
@@ -38,8 +40,8 @@ namespace dotnetPortalOkta.Controllers
             }
 
             return RedirectToAction("Index", "Home");
-        }    
-     
+        }
+
         [Authorize]
         public IActionResult Claims()
         {
@@ -71,6 +73,10 @@ namespace dotnetPortalOkta.Controllers
                 var appList = (await vader.AppLinks.ToList()).Select(g => g.AppName).ToArray();
                 var factors = await vader.Factors.ToArray();
 
+
+                //await _oktaClient.GetAsync<T>("/api/v1/apps?filter=user.id+eq+%22%22");
+
+
                 dynamic userInfoWrapper = new ExpandoObject();
                 userInfoWrapper.Profile = user.Profile;
                 userInfoWrapper.PasswordChanged = user.PasswordChanged;
@@ -80,7 +86,7 @@ namespace dotnetPortalOkta.Controllers
 
                 viewModel.Groups = (await user.Groups.ToList()).Select(g => g.Profile.Name).ToArray();
             }
-            
+
             return View(viewModel);
         }
 
