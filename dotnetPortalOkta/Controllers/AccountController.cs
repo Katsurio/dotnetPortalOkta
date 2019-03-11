@@ -69,18 +69,16 @@ namespace dotnetPortalOkta.Controllers
             if (!string.IsNullOrEmpty(username))
             {
                 var user = await _oktaClient.Users.GetUserAsync(username);
-                var vader = await _oktaClient.Users.GetUserAsync("jfisher.jobs");
-                var appList = (await vader.AppLinks.ToList()).Select( g => new 
-                    { 
-                        AppAssignmentId = g.AppAssignmentId,
-                        AppInstanceId = g.AppInstanceId,
-                        Name = g.AppName,
-                        Id = g.Id,
-                        Label = g.Label,
-                        Link = g.LinkUrl,
-                        Logo = g.LogoUrl
+                var appList = (await user.AppLinks.ToList()).Select(g => new
+                {
+                    g.AppAssignmentId,
+                    g.AppInstanceId,
+                    g.AppName,
+                    g.Id,
+                    g.Label,
+                    g.LinkUrl,
+                    g.LogoUrl
                 }).ToArray();
-                var factors = await vader.Factors.ToArray();
 
 
                 //await _oktaClient.GetAsync<T>("/api/v1/apps?filter=user.id+eq+%22%22");
