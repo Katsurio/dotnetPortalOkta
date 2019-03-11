@@ -11,5 +11,7 @@ namespace dotnetPortalOkta.Models
         public dynamic UserInfo { get; set; }
 
         public IEnumerable<string> Groups { get; set; }
+
+        public List<Okta.Sdk.IAppLink> Applications { get; set; }
     }
 }

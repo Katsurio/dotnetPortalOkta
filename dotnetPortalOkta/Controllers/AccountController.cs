@@ -69,21 +69,6 @@ namespace dotnetPortalOkta.Controllers
             if (!string.IsNullOrEmpty(username))
             {
                 var user = await _oktaClient.Users.GetUserAsync(username);
-                var appList = (await user.AppLinks.ToList()).Select(g => new
-                {
-                    g.AppAssignmentId,
-                    g.AppInstanceId,
-                    g.AppName,
-                    g.Id,
-                    g.Label,
-                    g.LinkUrl,
-                    g.LogoUrl
-                }).ToArray();
-
-
-                //await _oktaClient.GetAsync<T>("/api/v1/apps?filter=user.id+eq+%22%22");
-
-
                 dynamic userInfoWrapper = new ExpandoObject();
                 userInfoWrapper.Profile = user.Profile;
                 userInfoWrapper.PasswordChanged = user.PasswordChanged;
@@ -92,6 +77,8 @@ namespace dotnetPortalOkta.Controllers
                 viewModel.UserInfo = userInfoWrapper;
 
                 viewModel.Groups = (await user.Groups.ToList()).Select(g => g.Profile.Name).ToArray();
+
+                viewModel.Applications = await user.AppLinks.ToList();
             }
 
             return View(viewModel);
