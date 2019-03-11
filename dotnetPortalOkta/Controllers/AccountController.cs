@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Okta.Sdk;
 using dotnetPortalOkta.Models;
+using Okta.Sdk.Internal;
+using System;
 
 namespace dotnetPortalOkta.Controllers
 {
@@ -38,8 +40,8 @@ namespace dotnetPortalOkta.Controllers
             }
 
             return RedirectToAction("Index", "Home");
-        }    
-     
+        }
+
         [Authorize]
         public IActionResult Claims()
         {
@@ -67,10 +69,6 @@ namespace dotnetPortalOkta.Controllers
             if (!string.IsNullOrEmpty(username))
             {
                 var user = await _oktaClient.Users.GetUserAsync(username);
-
-                var vader = await _oktaClient.Users.GetUserAsync(username);
-                var appList = vader.AppLinks;
-
                 dynamic userInfoWrapper = new ExpandoObject();
                 userInfoWrapper.Profile = user.Profile;
                 userInfoWrapper.PasswordChanged = user.PasswordChanged;
@@ -79,8 +77,10 @@ namespace dotnetPortalOkta.Controllers
                 viewModel.UserInfo = userInfoWrapper;
 
                 viewModel.Groups = (await user.Groups.ToList()).Select(g => g.Profile.Name).ToArray();
+
+                viewModel.Applications = await user.AppLinks.ToList();
             }
-            
+
             return View(viewModel);
         }
 
