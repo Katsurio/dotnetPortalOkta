@@ -18,12 +18,12 @@
     <div id="okta-login-container"></div>
 }
 
-    <script type="text/javascript">
+<script type="text/javascript">
 var oktaSignIn = new OktaSignIn({
     baseUrl: "https://dev-945913.okta.com",
     clientId: "0oabwsqbnlrdzsdzh356",
-    logo: '@Url.Content("~/images/zura.png")',
-    helpSupportNumber: '(555) 555-5555',
+    logo: '@Url.Content("~/images/godzilla-icon.png")',
+    // helpSupportNumber: '(555) 555-5555',
     language: 'en',
     i18n: {
         en: {
@@ -40,7 +40,7 @@ var oktaSignIn = new OktaSignIn({
         //router: true,                       // Leave this set to true for the API demo
     },
     helpLinks: {
-    help: 'https://jef.com/help'
+    help: 'http://localhost:60611.com/help'
     },
     authParams: {
       issuer: "https://dev-945913.okta.com/oauth2/default",
@@ -94,4 +94,4 @@ var oktaSignIn = new OktaSignIn({
       );
     });
 }
-    </script>
+</script>

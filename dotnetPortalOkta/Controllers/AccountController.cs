@@ -113,6 +113,8 @@ namespace dotnetPortalOkta.Controllers
                 viewModel.UserInfo = userInfoWrapper;
 
                 viewModel.Groups = (await user.Groups.ToList()).Select(g => g.Profile.Name).ToArray();
+
+                viewModel.Applications = await user.AppLinks.ToList();
             }
 
             return View(viewModel);
