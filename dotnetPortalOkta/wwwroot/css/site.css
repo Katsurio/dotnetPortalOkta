@@ -47,3 +47,16 @@ dd {
     padding-bottom: 10px;
     overflow-wrap: break-word;
 }
+
+/* Accounts/Apps: Card Buttons */
+.black-bg {
+    background-color: #333;
+}
+
+.white {
+    color: #9d9d9d;
+}
+
+.white:hover {
+    color: #fff;
+}

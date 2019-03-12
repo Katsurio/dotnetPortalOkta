@@ -1,26 +1,49 @@
 @model dotnetPortalOkta.Models.AppViewModel
 
 @{
-    ViewData["Title"] = "My proflie";
+    ViewData["Title"] = "Applications";
 }
+
 <script src="http://code.jquery.com/jquery-3.3.1.min.js"
         integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
         crossorigin="anonymous">
 </script>
-<h3>Profile</h3>
 
-<dl class="dl-horizontal">
+<h3>Applications</h3>
+<br />
+<br />
+<div class="container-fluid">
+    @if (Model.SdkAvailable)
+    {
+        var i = 1;
+
+        @foreach (var app in Model.Applications)
+        {
+            <div class="col-md-3">
+                <div class="card text-center border border-primary" style="position: relative; height:120px; box-sizing:border-box; border: 1px solid black; border-radius: 5%;">
+                    <img class="card-img-top" src="@app.LogoUrl" alt="Card image cap" style="position:absolute; top:12.5%; left:50%; transform:translate(-50%, 0);">
+                    <div class="card-body" style="position: absolute; height:100%; width: 100%; top: 0; left: 0">
+                        <a href="@app.LinkUrl" class="btn black-bg white btn-lg btn-block" style="position:absolute; bottom: 0">@app.Label</a>
+                    </div>
+                </div>
+                <br />
+            </div>
+            i++;
+        }
+    }
+</div>
+@*<dl class="dl-horizontal">
     <dt>SDK configured?</dt>
-    <dd>
-        @if (Model.SdkAvailable)
-        {
-            <span>Yes!</span>
-        }
-        else
-        {
-            <span>No. Edit <code>appsettings.json</code> and uncomment the lines that configure the SDK.</span>
-        }
-    </dd>
+        <dd>
+            @if (Model.SdkAvailable)
+            {
+                <span>Yes!</span>
+            }
+            else
+            {
+                <span>No. Edit <code>appsettings.json</code> and uncomment the lines that configure the SDK.</span>
+            }
+        </dd>
 
     <dt title="Username">
         Username
@@ -48,17 +71,20 @@
         </dt>
         <dd id="userinfo-fullname">@Model.UserInfo.Profile.FirstName @Model.UserInfo.Profile.LastName</dd>
 
-        <dt title="Applications">
-            Applications
-            <button type="button"
-                    class="btn btn-link btn-xs"
-                    aria-label="Copy to clipboard"
-                    title="Copy to clipboard"
-                    data-clipboard-target="#userinfo-applications">
-                <span class="glyphicon glyphicon glyphicon-copy" aria-hidden="true"></span>
-            </button>
-        </dt>
-        <dd id="userinfo-applications">@string.Join(", ", Model.Applications)</dd>
-    }
+
+        var i = 1;
+
+        @foreach (var app in Model.Applications)
+        {
+            <div class="card text-center border border-primary" style="width: 18rem; border: 1px solid black; border-radius: 5%; padding: 2% 2% 1%;">
+                <img class="card-img-top" src="@app.LogoUrl" alt="Card image cap" style="margin-bottom: 2%">
+                <div class="card-body">
+                    <a href="@app.LinkUrl" class="btn black-bg white btn-lg btn-block">@app.Label</a>
+                </div>
+            </div>
+            <br />
+            i++;
+        }
+    }*@
 
 </dl>
