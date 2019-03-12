@@ -33,58 +33,58 @@
     }
 </div>
 @*<dl class="dl-horizontal">
-    <dt>SDK configured?</dt>
-        <dd>
-            @if (Model.SdkAvailable)
-            {
-                <span>Yes!</span>
-            }
-            else
-            {
-                <span>No. Edit <code>appsettings.json</code> and uncomment the lines that configure the SDK.</span>
-            }
-        </dd>
+        <dt>SDK configured?</dt>
+            <dd>
+                @if (Model.SdkAvailable)
+                {
+                    <span>Yes!</span>
+                }
+                else
+                {
+                    <span>No. Edit <code>appsettings.json</code> and uncomment the lines that configure the SDK.</span>
+                }
+            </dd>
 
-    <dt title="Username">
-        Username
-        <button type="button"
-                class="btn btn-link btn-xs"
-                aria-label="Copy to clipboard"
-                title="Copy to clipboard"
-                data-clipboard-target="#userinfo-username">
-            <span class="glyphicon glyphicon glyphicon-copy" aria-hidden="true"></span>
-        </button>
-    </dt>
-    <dd id="userinfo-username">@Model.Username</dd>
-
-    @if (Model.SdkAvailable)
-    {
-        <dt title="Full name">
-            Full name
+        <dt title="Username">
+            Username
             <button type="button"
                     class="btn btn-link btn-xs"
                     aria-label="Copy to clipboard"
                     title="Copy to clipboard"
-                    data-clipboard-target="#userinfo-fullname">
+                    data-clipboard-target="#userinfo-username">
                 <span class="glyphicon glyphicon glyphicon-copy" aria-hidden="true"></span>
             </button>
         </dt>
-        <dd id="userinfo-fullname">@Model.UserInfo.Profile.FirstName @Model.UserInfo.Profile.LastName</dd>
+        <dd id="userinfo-username">@Model.Username</dd>
 
-
-        var i = 1;
-
-        @foreach (var app in Model.Applications)
+        @if (Model.SdkAvailable)
         {
-            <div class="card text-center border border-primary" style="width: 18rem; border: 1px solid black; border-radius: 5%; padding: 2% 2% 1%;">
-                <img class="card-img-top" src="@app.LogoUrl" alt="Card image cap" style="margin-bottom: 2%">
-                <div class="card-body">
-                    <a href="@app.LinkUrl" class="btn black-bg white btn-lg btn-block">@app.Label</a>
-                </div>
-            </div>
-            <br />
-            i++;
-        }
-    }*@
+            <dt title="Full name">
+                Full name
+                <button type="button"
+                        class="btn btn-link btn-xs"
+                        aria-label="Copy to clipboard"
+                        title="Copy to clipboard"
+                        data-clipboard-target="#userinfo-fullname">
+                    <span class="glyphicon glyphicon glyphicon-copy" aria-hidden="true"></span>
+                </button>
+            </dt>
+            <dd id="userinfo-fullname">@Model.UserInfo.Profile.FirstName @Model.UserInfo.Profile.LastName</dd>
 
-</dl>
+
+            var i = 1;
+
+            @foreach (var app in Model.Applications)
+            {
+                <div class="card text-center border border-primary" style="width: 18rem; border: 1px solid black; border-radius: 5%; padding: 2% 2% 1%;">
+                    <img class="card-img-top" src="@app.LogoUrl" alt="Card image cap" style="margin-bottom: 2%">
+                    <div class="card-body">
+                        <a href="@app.LinkUrl" class="btn black-bg white btn-lg btn-block">@app.Label</a>
+                    </div>
+                </div>
+                <br />
+                i++;
+            }
+        }
+
+    </dl>*@
