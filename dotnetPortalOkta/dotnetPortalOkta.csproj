@@ -21,5 +21,6 @@
     <Content Remove="wwwroot\images\godZeal-monster-tokyo-icon.png" />
     <Content Remove="wwwroot\images\godzilla-icon.png" />
     <Content Remove="wwwroot\images\Japan-512.png" />
+    <Content Remove="Models\AppViewModel.cshtml" />
   </ItemGroup>
 </Project>

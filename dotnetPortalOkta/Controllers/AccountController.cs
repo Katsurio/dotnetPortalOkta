@@ -91,7 +91,7 @@ namespace dotnetPortalOkta.Controllers
                 .FirstOrDefault(x => x.Type == "preferred_username")
                 ?.Value.ToString();
 
-            var viewModel = new MeViewModel
+            var viewModel = new AppViewModel
             {
                 Username = username,
                 SdkAvailable = _oktaClient != null
@@ -107,12 +107,7 @@ namespace dotnetPortalOkta.Controllers
                 var user = await _oktaClient.Users.GetUserAsync(username);
                 dynamic userInfoWrapper = new ExpandoObject();
                 userInfoWrapper.Profile = user.Profile;
-                userInfoWrapper.PasswordChanged = user.PasswordChanged;
-                userInfoWrapper.LastLogin = user.LastLogin;
-                userInfoWrapper.Status = user.Status.ToString();
                 viewModel.UserInfo = userInfoWrapper;
-
-                viewModel.Groups = (await user.Groups.ToList()).Select(g => g.Profile.Name).ToArray();
 
                 viewModel.Applications = await user.AppLinks.ToList();
             }
